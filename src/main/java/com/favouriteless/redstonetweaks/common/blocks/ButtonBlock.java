@@ -20,19 +20,19 @@
  *
  */
 
-package com.favouriteless.redstonetweaks.mixin;
+package com.favouriteless.redstonetweaks.common.blocks;
 
-import com.favouriteless.redstonetweaks.RedstoneTweaks;
-import net.minecraft.client.gui.screen.TitleScreen;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.AbstractButtonBlock;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 
-@Mixin(TitleScreen.class)
-public class ExampleMixin {
-	@Inject(at = @At("HEAD"), method = "init()V")
-	private void init(CallbackInfo info) {
-		RedstoneTweaks.LOGGER.info("This line is printed by an example mod mixin!");
-	}
+public class ButtonBlock extends AbstractButtonBlock {
+    public ButtonBlock(AbstractBlock.Settings settings) {
+        super(false, settings);
+    }
+
+    protected SoundEvent getClickSound(boolean powered) {
+        return powered ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF;
+    }
 }
