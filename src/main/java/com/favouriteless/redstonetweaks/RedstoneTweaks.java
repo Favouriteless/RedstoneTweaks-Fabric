@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2021. Favouriteless
+ * RedstoneTweaks-Fabric, a minecraft mod.
+ * GNU GPLv3 License
+ *
+ *     This file is part of RedstoneTweaks-Fabric.
+ *
+ *     RedstoneTweaks-Fabric is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     RedstoneTweaks-Fabric is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with RedstoneTweaks-Fabric.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.favouriteless.redstonetweaks;
 
 import net.fabricmc.api.ModInitializer;
@@ -17,6 +39,6 @@ public class RedstoneTweaks implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "fabric_item"), TEST_ITEM);
+		Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "test_item"), TEST_ITEM);
 	}
 }
