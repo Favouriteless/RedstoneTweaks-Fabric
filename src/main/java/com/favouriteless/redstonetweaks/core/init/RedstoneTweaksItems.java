@@ -34,10 +34,18 @@ public class RedstoneTweaksItems {
     public static final Item ANDESITE_BUTTON = new BlockItem(RedstoneTweaksBlocks.ANDESITE_BUTTON, new FabricItemSettings().group(ItemGroup.REDSTONE));
     public static final Item DIORITE_BUTTON = new BlockItem(RedstoneTweaksBlocks.DIORITE_BUTTON, new FabricItemSettings().group(ItemGroup.REDSTONE));
     public static final Item GRANITE_BUTTON = new BlockItem(RedstoneTweaksBlocks.GRANITE_BUTTON, new FabricItemSettings().group(ItemGroup.REDSTONE));
+    public static final Item ANDESITE_PRESSURE_PLATE = new BlockItem(RedstoneTweaksBlocks.ANDESITE_PRESSURE_PLATE, new FabricItemSettings().group(ItemGroup.REDSTONE));
+    public static final Item DIORITE_PRESSURE_PLATE = new BlockItem(RedstoneTweaksBlocks.DIORITE_PRESSURE_PLATE, new FabricItemSettings().group(ItemGroup.REDSTONE));
+    public static final Item GRANITE_PRESSURE_PLATE = new BlockItem(RedstoneTweaksBlocks.GRANITE_PRESSURE_PLATE, new FabricItemSettings().group(ItemGroup.REDSTONE));
+    public static final Item TORCH_LEVER = new BlockItem(RedstoneTweaksBlocks.TORCH_LEVER, new FabricItemSettings().group(ItemGroup.REDSTONE));
 
     public static void onInitialize() {
         Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "andesite_button"), ANDESITE_BUTTON);
         Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "diorite_button"), DIORITE_BUTTON);
         Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "granite_button"), GRANITE_BUTTON);
+        Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "andesite_pressure_plate"), ANDESITE_PRESSURE_PLATE);
+        Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "diorite_pressure_plate"), DIORITE_PRESSURE_PLATE);
+        Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "granite_pressure_plate"), GRANITE_PRESSURE_PLATE);
+        Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "torch_lever"), TORCH_LEVER);
     }
 }

@@ -20,19 +20,15 @@
  *
  */
 
-package com.favouriteless.redstonetweaks.common.blocks;
+package com.favouriteless.redstonetweaks;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.AbstractButtonBlock;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+import com.favouriteless.redstonetweaks.core.init.RedstoneTweaksBlocks;
+import net.fabricmc.api.ClientModInitializer;
 
-public class ButtonBlock extends AbstractButtonBlock {
-    public ButtonBlock(AbstractBlock.Settings settings) {
-        super(false, settings);
-    }
+public class RedstoneTweaksClient implements ClientModInitializer {
 
-    protected SoundEvent getClickSound(boolean powered) {
-        return powered ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF;
+    @Override
+    public void onInitializeClient() {
+        RedstoneTweaksBlocks.onInitializeClient();
     }
 }
