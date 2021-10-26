@@ -38,6 +38,7 @@ public class RedstoneTweaksItems {
     public static final Item DIORITE_PRESSURE_PLATE = new BlockItem(RedstoneTweaksBlocks.DIORITE_PRESSURE_PLATE, new FabricItemSettings().group(ItemGroup.REDSTONE));
     public static final Item GRANITE_PRESSURE_PLATE = new BlockItem(RedstoneTweaksBlocks.GRANITE_PRESSURE_PLATE, new FabricItemSettings().group(ItemGroup.REDSTONE));
     public static final Item TORCH_LEVER = new BlockItem(RedstoneTweaksBlocks.TORCH_LEVER, new FabricItemSettings().group(ItemGroup.REDSTONE));
+    public static final Item BOOKSHELF_SWITCH = new BlockItem(RedstoneTweaksBlocks.BOOKSHELF_SWITCH, new FabricItemSettings().group(ItemGroup.REDSTONE));
 
     public static void onInitialize() {
         Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "andesite_button"), ANDESITE_BUTTON);
@@ -47,5 +48,6 @@ public class RedstoneTweaksItems {
         Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "diorite_pressure_plate"), DIORITE_PRESSURE_PLATE);
         Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "granite_pressure_plate"), GRANITE_PRESSURE_PLATE);
         Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "torch_lever"), TORCH_LEVER);
+        Registry.register(Registry.ITEM, new Identifier("redstonetweaks", "bookshelf_switch"), BOOKSHELF_SWITCH);
     }
 }

@@ -39,9 +39,9 @@ import net.minecraft.world.WorldView;
 import java.util.Random;
 
 
-public class TorchLever extends LeverBlock {
+public class TorchLeverBlock extends LeverBlock {
 
-    public TorchLever(Settings settings) {
+    public TorchLeverBlock(Settings settings) {
         super(settings);
     }
 

@@ -41,7 +41,8 @@ public class RedstoneTweaksBlocks {
     public static final Block ANDESITE_PRESSURE_PLATE = new ModPressurePlateBlock(ModPressurePlateBlock.ActivationRule.MOBS, AbstractBlock.Settings.of(Material.STONE).requiresTool().noCollision().strength(0.5F));
     public static final Block DIORITE_PRESSURE_PLATE = new ModPressurePlateBlock(ModPressurePlateBlock.ActivationRule.MOBS, AbstractBlock.Settings.of(Material.STONE).requiresTool().noCollision().strength(0.5F));
     public static final Block GRANITE_PRESSURE_PLATE = new ModPressurePlateBlock(ModPressurePlateBlock.ActivationRule.MOBS, AbstractBlock.Settings.of(Material.STONE).requiresTool().noCollision().strength(0.5F));
-    public static final Block TORCH_LEVER = new TorchLever(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance((state) -> 14).sounds(BlockSoundGroup.WOOD));
+    public static final Block TORCH_LEVER = new TorchLeverBlock(AbstractBlock.Settings.of(Material.DECORATION).noCollision().breakInstantly().luminance((state) -> 14).sounds(BlockSoundGroup.WOOD));
+    public static final Block BOOKSHELF_SWITCH = new BookshelfSwitchBlock(AbstractBlock.Settings.of(Material.WOOD).strength(1.5F).sounds(BlockSoundGroup.WOOD).nonOpaque());
 
     public static void onInitialize() {
         Registry.register(Registry.BLOCK, new Identifier("redstonetweaks", "andesite_button"), ANDESITE_BUTTON);
@@ -51,6 +52,7 @@ public class RedstoneTweaksBlocks {
         Registry.register(Registry.BLOCK, new Identifier("redstonetweaks", "diorite_pressure_plate"), DIORITE_PRESSURE_PLATE);
         Registry.register(Registry.BLOCK, new Identifier("redstonetweaks", "granite_pressure_plate"), GRANITE_PRESSURE_PLATE);
         Registry.register(Registry.BLOCK, new Identifier("redstonetweaks", "torch_lever"), TORCH_LEVER);
+        Registry.register(Registry.BLOCK, new Identifier("redstonetweaks", "bookshelf_switch"), BOOKSHELF_SWITCH);
     }
 
     public static void onInitializeClient() {
