@@ -22,82 +22,83 @@
 
 package com.favouriteless.redstonetweaks.common.blocks;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
 
-public class BookshelfSwitchBlock extends HorizontalFacingBlock {
+public class BookshelfSwitchBlock extends HorizontalDirectionalBlock {
 
-    public static final BooleanProperty POWERED = Properties.POWERED;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-    public BookshelfSwitchBlock(AbstractBlock.Settings settings) {
+    public BookshelfSwitchBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(POWERED, false));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(POWERED, false));
     }
 
     @Override
-    public boolean emitsRedstonePower(BlockState state) {
+    public boolean isSignalSource(BlockState state) {
         return true;
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        return state.get(POWERED) ? 15 : 0;
+    public int getSignal(BlockState state, BlockGetter blockGetter, BlockPos pos, Direction direction) {
+        return state.getValue(POWERED) ? 15 : 0;
     }
 
+
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!moved && !state.isOf(newState.getBlock())) {
-            if ((Boolean)state.get(POWERED)) {
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!moved && !state.is(newState.getBlock())) {
+            if (state.getValue(POWERED)) {
                 this.updateNeighbors(state, world, pos);
             }
 
-            super.onStateReplaced(state, world, pos, newState, moved);
+            super.onRemove(state, world, pos, newState, moved);
         }
     }
 
-    private void updateNeighbors(BlockState state, World world, BlockPos pos) {
-        world.updateNeighborsAlways(pos, this);
+    private void updateNeighbors(BlockState state, Level world, BlockPos pos) {
+        world.updateNeighborsAt(pos, this);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockState blockState;
-        if (world.isClient) {
+        if (world.isClientSide) {
             blockState = state.cycle(POWERED);
-            if (blockState.get(POWERED)) {
+            if (blockState.getValue(POWERED)) {
                 spawnParticles(blockState, world, pos, 1.0F);
             }
 
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else {
             blockState = this.togglePower(state, world, pos);
-            float f = blockState.get(POWERED) ? 0.6F : 0.5F;
-            world.playSound(null, pos, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.3F, f);
-            world.emitGameEvent(player, blockState.get(POWERED) ? GameEvent.BLOCK_SWITCH : GameEvent.BLOCK_UNSWITCH, pos);
-            return ActionResult.CONSUME;
+            float f = blockState.getValue(POWERED) ? 0.6F : 0.5F;
+            world.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, f);
+            world.gameEvent(player, blockState.getValue(POWERED) ? GameEvent.BLOCK_SWITCH : GameEvent.BLOCK_UNSWITCH, pos);
+            return InteractionResult.CONSUME;
         }
     }
 
-    private static void spawnParticles(BlockState state, WorldAccess world, BlockPos pos, float alpha) {
-/*        Direction direction = ((Direction)state.get(FACING)).getOpposite();
+    private static void spawnParticles(BlockState state, LevelAccessor world, BlockPos pos, float alpha) {
+/*        Direction direction = ((Direction)state.getValue(FACING)).getOpposite();
         Direction direction2 = getDirection(state).getOpposite();
         double d = (double)pos.getX() + 0.5D + 0.1D * (double)direction.getOffsetX() + 0.2D * (double)direction2.getOffsetX();
         double e = (double)pos.getY() + 0.5D + 0.1D * (double)direction.getOffsetY() + 0.2D * (double)direction2.getOffsetY();
@@ -105,20 +106,20 @@ public class BookshelfSwitchBlock extends HorizontalFacingBlock {
         world.addParticle(new DustParticleEffect(DustParticleEffect.RED, alpha), d, e, f, 0.0D, 0.0D, 0.0D);*/
     }
 
-    public BlockState togglePower(BlockState state, World world, BlockPos pos) {
+    public BlockState togglePower(BlockState state, Level world, BlockPos pos) {
         state = state.cycle(POWERED);
-        world.setBlockState(pos, state, Block.NOTIFY_ALL);
+        world.setBlockAndUpdate(pos, state);
         this.updateNeighbors(state, world, pos);
         return state;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, POWERED);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite());
     }
 }

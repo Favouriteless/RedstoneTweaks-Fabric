@@ -22,79 +22,85 @@
 
 package com.favouriteless.redstonetweaks.common.blocks;
 
-import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.BasePressurePlateBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class ModPressurePlateBlock extends AbstractPressurePlateBlock {
-    public static final BooleanProperty POWERED;
-    private final ModPressurePlateBlock.ActivationRule type;
+public class ModPressurePlateBlock extends BasePressurePlateBlock {
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+    private final Sensitivity sensitivity;
 
-    public ModPressurePlateBlock(ModPressurePlateBlock.ActivationRule type, AbstractBlock.Settings settings) {
+    public ModPressurePlateBlock(Sensitivity sensitivity, BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState((BlockState)((BlockState)this.stateManager.getDefaultState()).with(POWERED, false));
-        this.type = type;
+        this.registerDefaultState(this.defaultBlockState().setValue(POWERED, false));
+        this.sensitivity = sensitivity;
     }
 
-    protected int getRedstoneOutput(BlockState state) {
-        return (Boolean)state.get(POWERED) ? 15 : 0;
+    @Override
+    protected int getSignalForState(BlockState state) {
+        return state.getValue(POWERED) ? 15 : 0;
     }
 
-    protected BlockState setRedstoneOutput(BlockState state, int rsOut) {
-        return (BlockState)state.with(POWERED, rsOut > 0);
+    @Override
+    protected BlockState setSignalForState(BlockState state, int rsOut) {
+        return state.setValue(POWERED, Boolean.valueOf(rsOut > 0));
     }
 
-    protected void playPressSound(WorldAccess world, BlockPos pos) {
+    @Override
+    protected void playOnSound(LevelAccessor world, BlockPos pos) {
         if (this.material != Material.WOOD && this.material != Material.NETHER_WOOD) {
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_STONE_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCKS, 0.3F, 0.6F);
+            world.playSound(null, pos, SoundEvents.STONE_PRESSURE_PLATE_CLICK_ON, SoundSource.BLOCKS, 0.3F, 0.6F);
         } else {
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_WOODEN_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCKS, 0.3F, 0.8F);
+            world.playSound(null, pos, SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON, SoundSource.BLOCKS, 0.3F, 0.8F);
         }
 
     }
 
-    protected void playDepressSound(WorldAccess world, BlockPos pos) {
+    @Override
+    protected void playOffSound(LevelAccessor world, BlockPos pos) {
         if (this.material != Material.WOOD && this.material != Material.NETHER_WOOD) {
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_STONE_PRESSURE_PLATE_CLICK_OFF, SoundCategory.BLOCKS, 0.3F, 0.5F);
+            world.playSound(null, pos, SoundEvents.STONE_PRESSURE_PLATE_CLICK_OFF, SoundSource.BLOCKS, 0.3F, 0.5F);
         } else {
-            world.playSound((PlayerEntity)null, pos, SoundEvents.BLOCK_WOODEN_PRESSURE_PLATE_CLICK_OFF, SoundCategory.BLOCKS, 0.3F, 0.7F);
+            world.playSound(null, pos, SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_OFF, SoundSource.BLOCKS, 0.3F, 0.7F);
         }
 
     }
 
-    protected int getRedstoneOutput(World world, BlockPos pos) {
-        Box box = BOX.offset(pos);
-        List list3;
-        switch(this.type) {
+    @Override
+    protected int getSignalStrength(Level level, BlockPos pos) {
+        AABB aabb = TOUCH_AABB.move(pos);
+        List<? extends Entity> list;
+        switch(this.sensitivity) {
             case EVERYTHING:
-                list3 = world.getOtherEntities((Entity)null, box);
+                list = level.getEntities(null, aabb);
                 break;
             case MOBS:
-                list3 = world.getNonSpectatingEntities(LivingEntity.class, box);
+                list = level.getEntitiesOfClass(LivingEntity.class, aabb);
                 break;
             default:
                 return 0;
         }
 
-        if (!list3.isEmpty()) {
-            Iterator var5 = list3.iterator();
-
-            while(var5.hasNext()) {
-                Entity entity = (Entity)var5.next();
-                if (!entity.canAvoidTraps()) {
+        if (!list.isEmpty()) {
+            for(Entity entity : list) {
+                if (!entity.isIgnoringBlockTriggers()) {
                     return 15;
                 }
             }
@@ -103,15 +109,12 @@ public class ModPressurePlateBlock extends AbstractPressurePlateBlock {
         return 0;
     }
 
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWERED);
     }
 
-    static {
-        POWERED = Properties.POWERED;
-    }
-
-    public static enum ActivationRule {
+    public enum Sensitivity {
         EVERYTHING,
         MOBS;
     }

@@ -22,17 +22,19 @@
 
 package com.favouriteless.redstonetweaks.common.blocks;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.AbstractButtonBlock;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
-public class ModButtonBlock extends AbstractButtonBlock {
-    public ModButtonBlock(AbstractBlock.Settings settings) {
+public class ModButtonBlock extends ButtonBlock {
+
+    public ModButtonBlock(BlockBehaviour.Properties settings) {
         super(false, settings);
     }
 
-    protected SoundEvent getClickSound(boolean powered) {
-        return powered ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF;
+    @Override
+    protected SoundEvent getSound(boolean powered) {
+        return powered ? SoundEvents.STONE_BUTTON_CLICK_ON : SoundEvents.STONE_BUTTON_CLICK_OFF;
     }
 }
